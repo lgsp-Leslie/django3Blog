@@ -2,6 +2,8 @@
 
 {% block title %}{{ blog_type.type_name }}{% endblock %}
 
+{% block nav_blog_active %}active{% endblock %}
+
 {% block content %}
     <p>{{ blog_type.type_name }}</p>
     {% for blog in blogs %}
