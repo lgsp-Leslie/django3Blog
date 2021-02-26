@@ -1,18 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'blog_list.html' %}
 
 {% block title %}{{ blog_type.type_name }}{% endblock %}
 
-{% block nav_blog_active %}active{% endblock %}
-
-{% block content %}
-    <p>{{ blog_type.type_name }}</p>
-    {% for blog in blogs %}
-        <a href="{% url 'blog_detail' blog.pk %}">
-            <h3>{{ blog.title }}</h3>
-        </a>
-        <p>{{ blog.content|truncatechars:3 }}...</p>
-    {% empty %}
-        <p>——暂无博客——</p>
-    {% endfor %}
-    <p>共有{{ blogs|length }}篇博客</p>
-{% endblock %}
+{% block blog_list_title %}分类：{{ blog_type.type_name }}（共有{{ blogs|length }}篇博客）<a href="{% url 'blog_list' %}">显示全部博客</a>{% endblock %}
