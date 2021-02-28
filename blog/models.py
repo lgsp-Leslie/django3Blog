@@ -25,6 +25,7 @@ class Blog(models.Model):
     class Meta:
         verbose_name = '文章'
         verbose_name_plural = '文章'
+        ordering = ['-created_time']
 
     def __str__(self):
         return self.title
