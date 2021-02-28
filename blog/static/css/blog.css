@@ -17,6 +17,10 @@ div.blog p.blog-info {
     margin-bottom: 5px;
 }
 
+div.paginator {
+    text-align: center;
+}
+
 div.blog p.blog-info span {
     margin-right: 5px;
 }
