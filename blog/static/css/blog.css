@@ -38,3 +38,10 @@ ul.blog-info-description li {
 div.blog-content {
     text-indent: 2em;
 }
+
+.blog-more {
+    display: flex;
+    justify-items: baseline;
+    justify-content: space-between;
+
+}
