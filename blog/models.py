@@ -1,3 +1,4 @@
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -15,7 +16,7 @@ class BlogType(models.Model):
 
 class Blog(models.Model):
     title = models.CharField('标题', max_length=64)
-    content = models.TextField('内容')
+    content = RichTextUploadingField('内容')
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     created_time = models.DateTimeField('创建时间', auto_now_add=True)
     updated_time = models.DateTimeField('更新时间', auto_now=True)
