@@ -89,8 +89,14 @@ def blogs_with_date(request, year, month):
 
 def blog_detail(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk)
+    if not request.COOKIES.get('blog_%s_read_num' % blog_pk):
+        blog.read_num += 1
+        blog.save()
+
+    # 上下篇博客
     previous_blog = Blog.objects.filter(created_time__gt=blog.created_time).last()
     next_blog = Blog.objects.filter(created_time__lt=blog.created_time).first()
+
     blog_dates = Blog.objects.dates('created_time', 'month', order='DESC')
 
     context = {
@@ -99,4 +105,7 @@ def blog_detail(request, blog_pk):
         'next_blog': next_blog,
         'blog_dates': blog_dates,
     }
-    return render(request, 'blog_detail.html', context=context)
+    # return render(request, 'blog_detail.html', context=context)
+    response = render(request, 'blog_detail.html', context=context) # 响应
+    response.set_cookie('blog_%s_read_num' % blog_pk, 'true')
+    return response

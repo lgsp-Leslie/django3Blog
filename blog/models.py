@@ -17,11 +17,12 @@ class BlogType(models.Model):
 class Blog(models.Model):
     title = models.CharField('标题', max_length=64)
     content = RichTextUploadingField('内容')
-    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='作者')
+    read_num = models.IntegerField('阅读数', default=0)
     created_time = models.DateTimeField('创建时间', auto_now_add=True)
     updated_time = models.DateTimeField('更新时间', auto_now=True)
 
-    blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING)
+    blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING, verbose_name='博客类型')
 
     class Meta:
         verbose_name = '文章'
