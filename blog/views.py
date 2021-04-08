@@ -3,12 +3,12 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 
-from blog.models import Blog, BlogType
+from blog.models import Blog, BlogType, ReadNum
 from django3Blog.settings import EACH_PAGE_BLOGS_NUMBER
 
 
 def get_blog_list_common_data(request, blogs_all_list):
-    blog_types = BlogType.objects.all()
+    # blog_types = BlogType.objects.all()
     blog_dates = Blog.objects.dates('created_time', 'month', order='DESC')
 
     paginator = Paginator(blogs_all_list, EACH_PAGE_BLOGS_NUMBER)
@@ -90,8 +90,15 @@ def blogs_with_date(request, year, month):
 def blog_detail(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk)
     if not request.COOKIES.get('blog_%s_read_num' % blog_pk):
-        blog.read_num += 1
-        blog.save()
+        if ReadNum.objects.filter(blog=blog):
+            # 存在对应记录
+            read_num = ReadNum.objects.get(blog=blog)
+        else:
+            # 不存在对应记录
+            read_num = ReadNum(blog=blog)
+        # 计数+1
+        read_num.read_num += 1
+        read_num.save()
 
     # 上下篇博客
     previous_blog = Blog.objects.filter(created_time__gt=blog.created_time).last()
@@ -106,6 +113,6 @@ def blog_detail(request, blog_pk):
         'blog_dates': blog_dates,
     }
     # return render(request, 'blog_detail.html', context=context)
-    response = render(request, 'blog_detail.html', context=context) # 响应
+    response = render(request, 'blog_detail.html', context=context)  # 响应
     response.set_cookie('blog_%s_read_num' % blog_pk, 'true')
     return response
