@@ -3,7 +3,9 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404
 
-from blog.models import Blog, BlogType, ReadNum
+from access_statistics.utils import read_statistics_once_read
+# from blog.models import Blog, BlogType, ReadNum
+from blog.models import Blog, BlogType
 from django3Blog.settings import EACH_PAGE_BLOGS_NUMBER
 
 
@@ -89,6 +91,7 @@ def blogs_with_date(request, year, month):
 
 def blog_detail(request, blog_pk):
     blog = get_object_or_404(Blog, pk=blog_pk)
+    """
     if not request.COOKIES.get('blog_%s_read_num' % blog_pk):
         if ReadNum.objects.filter(blog=blog):
             # 存在对应记录
@@ -99,6 +102,8 @@ def blog_detail(request, blog_pk):
         # 计数+1
         read_num.read_num += 1
         read_num.save()
+        """
+    read_cookie_key = read_statistics_once_read(request, blog)
 
     # 上下篇博客
     previous_blog = Blog.objects.filter(created_time__gt=blog.created_time).last()
@@ -114,5 +119,6 @@ def blog_detail(request, blog_pk):
     }
     # return render(request, 'blog_detail.html', context=context)
     response = render(request, 'blog_detail.html', context=context)  # 响应
-    response.set_cookie('blog_%s_read_num' % blog_pk, 'true')
+    # response.set_cookie('blog_%s_read_num' % blog_pk, 'true')
+    response.set_cookie(read_cookie_key, 'true')  # 阅读cookie标记
     return response
