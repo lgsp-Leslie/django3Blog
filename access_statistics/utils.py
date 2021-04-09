@@ -57,18 +57,6 @@ def get_seven_days_read_data(content_type):
     return dates, read_nums
 
 
-# 获取当天/昨天热门数据
-def get_day_hot_data(content_type, days):
-    day = timezone.now().date()
-    if days == 1:
-        day = day - timezone.timedelta(days=days)
-    read_details = ReadDetail.objects \
-        .filter(content_type=content_type, date=day) \
-        .order_by('-read_num')
-
-    return read_details[:7]
-
-
 # # 获取当天热门数据
 # def get_today_hot_data(content_type):
 #     today = timezone.now().date()
@@ -90,13 +78,32 @@ def get_day_hot_data(content_type, days):
 #     return read_details[:7]
 
 
-# 获取本周/本月/今年热门数据
+# # 获取当天/昨天热门数据
+# def get_day_hot_data(content_type, days):
+#     day = timezone.now().date()
+#     if days == 1:
+#         day = day - timezone.timedelta(days=days)
+#     read_details = ReadDetail.objects \
+#         .filter(content_type=content_type, date=day) \
+#         .order_by('-read_num')
+#
+#     return read_details[:7]
+
+
+# 获取当天/昨天/本周/本月/今年热门数据
 def get_days_hot_data(content_type, days):
     today = timezone.now().date()
     date = today - datetime.timedelta(days=days)
-    read_details = content_type.objects \
-        .filter(read_details__date__lt=today, read_details__date__gte=date) \
-        .values('id', 'title') \
-        .annotate(read_num_sum=Sum('read_details__read_num')) \
-        .order_by('-read_num_sum')
+
+    if days == 0 or days == 1:
+        read_details = ReadDetail.objects \
+            .filter(content_type=content_type, date=date) \
+            .order_by('-read_num')
+    else:
+        read_details = content_type.objects \
+            .filter(read_details__date__lt=today, read_details__date__gte=date) \
+            .values('id', 'title') \
+            .annotate(read_num_sum=Sum('read_details__read_num')) \
+            .order_by('-read_num_sum')
+
     return read_details[:7]
