@@ -8,6 +8,7 @@
 import datetime
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.db.models import Sum
 from django.utils import timezone
 
@@ -107,3 +108,12 @@ def get_days_hot_data(content_type, days):
             .order_by('-read_num_sum')
 
     return read_details[:7]
+
+
+# 缓存热门排行数据
+def cache_hot_data(key, data):
+    cache_data = cache.get('cache_%s' % key)
+    if cache_data is None:
+        cache.set('cache_%s' % key, data, 3600)
+
+    return cache_data
